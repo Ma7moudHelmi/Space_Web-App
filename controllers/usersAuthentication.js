@@ -5,12 +5,12 @@ const joi = require("joi");
 
 exports.registerUser = async (req, res, next) => {
   // To check if user is already exist
-  try{
-    const existingUser = await usersSchema.findOne({email: req.body.email });
-    if(existingUser) return res.status(400).json({ error: 'Email already exists' });
-
-  }catch(err){
-    return res.status(400).json({error: 'something went wrong'})
+  try {
+    const existingUser = await usersSchema.findOne({ email: req.body.email });
+    if (existingUser)
+      return res.status(400).json({ error: "Email already exists" });
+  } catch (err) {
+    return res.status(400).json({ error: "something went wrong" });
   }
   const hash = bcrypt.hashSync(req.body.password, 10);
   let userSchema = new usersSchema({
@@ -43,9 +43,8 @@ exports.loginUser = (req, res, next) => {
   usersSchema
     .findOne({ email: req.body.email })
     .then((data) => {
-      if(data==null) throw new Error("email not found")
-       if ( data.length !== 0) {
-
+      if (data == null) throw new Error("email not found");
+      if (data.length !== 0) {
         if (!bcrypt.compareSync(req.body.password, data.password)) {
           throw new Error("Invalid password");
         }
@@ -63,7 +62,6 @@ exports.loginUser = (req, res, next) => {
             .status(200)
             .cookie("x_access_token", token, { httpOnly: true })
             .json({ message: "all is done" });
-
         } else {
           throw new Error("something went wrong");
         }
